@@ -1,3 +1,6 @@
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,15 +72,16 @@ public class OrderProcessor {
     // Calculate final order total including promo codes, taxes, and shipping. PromoCodes money off should result in the same exact amount of discount per tier regardless of other bonuses. (PromoCodes after discounts)
     public double calculateFinalTotal(Customer customer, boolean isExpress, double taxRate) {
         double total = calculateSubtotal();
+
+        // Apply Tier Discount
+        double tierDiscount = calculateTierDiscount(total, customer);
+        total -= tierDiscount;
         // Apply Promo Codes (Flat $10 off each)
         for (String promo : appliedPromos) {
             if (promo.equals("SAVE10")) {
                 total -= 10.0;
             }
         }
-        // Apply Tier Discount
-        double tierDiscount = calculateTierDiscount(total, customer);
-        total -= tierDiscount;
         // Apply Rewards
         if (customer.getRewardBalance() > 0) {
             if (customer.getRewardBalance() >= total) {
@@ -120,6 +124,14 @@ public class OrderProcessor {
                     cart.remove(j);
                 }
             }
+        }
+    }
+    @Nested
+    public class OrderProcessorTester{
+        OrderProcessor testing;
+        @BeforeEach
+        public void setup(){
+            testing = new OrderProcessor();
         }
     }
 }
