@@ -1,8 +1,12 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 // Process orders and handle payments/inventory
 public class OrderProcessor {
@@ -12,8 +16,9 @@ public class OrderProcessor {
 
     //adds the quantity of a product to the cart if its valid
     public void addToCart(Product product, int qty) {
+        CartItem adding = new CartItem(product,qty);
         if (qty > 0) {
-            cart.add(new CartItem(product, qty));
+            cart.add(adding);
         }
     }
 
@@ -129,9 +134,21 @@ public class OrderProcessor {
     @Nested
     public class OrderProcessorTester{
         OrderProcessor testing;
+        Product forTests;
         @BeforeEach
         public void setup(){
             testing = new OrderProcessor();
+            forTests = new Product("12345678", 100, 10);
+        }
+        @Test
+        void addToCartTesterNegative(){
+            testing.addToCart(forTests, -2);
+            assertFalse(-2, adding.getQuantity());
+        }
+        @Test
+        void addToCartTesterPositive(){
+            testing.addToCart(forTests, 2);
+            assertEquals(2,adding.getQuantity());
         }
     }
 }
